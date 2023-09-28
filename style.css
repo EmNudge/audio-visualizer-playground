@@ -1,0 +1,38 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+body {
+  background: black;
+  color: white;
+  font-family: sans-serif;
+  padding: 2rem;
+}
+
+button, .btn {
+  border: none;
+  background: #383838;
+  color: white;
+  padding: 0.5rem 1rem;
+  border-radius: 0.25rem;
+  cursor: pointer;
+}
+
+input[type="color"] {
+  cursor: pointer;
+  border: 1px solid white;
+  border-radius: 0.15rem;
+  overflow: hidden;
+}
+input[type="color"]::-webkit-color-swatch-wrapper {
+  padding: 0;
+}
+input[type="color"]::-webkit-color-swatch {
+	border: none;
+  border-radius: 0.15rem;
+}
+input[type="number"] {
+  background: #000000;
+  padding: 0 0.5rem;
+  border-radius: .15rem;
+}

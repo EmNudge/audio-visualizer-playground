@@ -1,0 +1,86 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <link rel="icon" type="image/svg+xml" href="/sound.svg" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <link rel="stylesheet" href="/prism-one-dark.css" />
+    <title>Audio Visualizer</title>
+  </head>
+  <body>
+    <h1
+      class="text-5xl font-mono border border-violet-200 border-opacity-20 p-4 rounded-md"
+    >
+      Audio Visualizer
+    </h1>
+    <br />
+
+    <main class="grid gap-8 grid-cols-2 max-w-screen-2xl m-auto">
+      <div class="p-4 bg-slate-900 rounded-lg flex flex-col gap-4">
+        <canvas
+          class="border-white border border-opacity-10 rounded-md"
+          height="400px"
+          width="400px"
+        ></canvas>
+        <div class="flex gap-2 items-center song-name-container">
+          <div class="h-6 opacity-80 pl-2">
+            <img src="/sound.svg" alt="sound icon" class="w-6 h-6">
+          </div>
+          <h2>No Song Loaded</h2>
+          <div class="w-2"></div>
+          <label class="change-song">
+            <span class="btn">Change Song</span>
+            <input type="file" class="w-0 h-0 opacity-0" accept="audio/mp3, audio/ogg, audio/vorbis, audio/wav" />
+          </label>
+        </div>
+        <audio
+          class="w-full"
+          autoplay
+          volume=".05"
+          controls
+          src="#"
+        ></audio>
+      </div>
+      <section class="rounded-md flex flex-col gap-4">
+        <fieldset
+          class="bg-slate-900 p-4 border border-violet-300 border-opacity-10 rounded-md "
+        >
+          <legend class="opacity-75">Variables</legend>
+          <div class="variables-container grid grid-cols-2">
+          </div>
+        </fieldset>
+        <div class="bg-slate-900 rounded-md overflow-auto p-2 h-full">
+          <div class="code-container h-10 p-4"></div>
+        </div>
+      </section>
+    </main>
+
+    <script type="module">
+      const [nameEl, inputEl] = document.querySelectorAll('.song-name-container h2, .song-name-container input');
+      const audioEl = document.querySelector('audio');
+
+      caches.open('audioCache').then(async cache => {
+        const audioResp = await cache.match('audioFile');
+        if (!audioResp) return;
+
+        const blob = await audioResp.blob();
+        const name = await cache.match('audioName').then((resp) => resp.text());
+
+        audioEl.src = URL.createObjectURL(blob);
+        nameEl.textContent = name;
+      });
+
+      inputEl.addEventListener('input', ({ currentTarget }) => {
+        const file = currentTarget.files[0];
+        audioEl.src = URL.createObjectURL(file);
+        nameEl.textContent = file.name;
+
+        caches.open('audioCache').then(async cache => {
+          await cache.put('audioFile', new Response(file));
+          await cache.put('audioName', new Response(file.name));
+        });
+      });
+    </script>
+    <script type="module" src="/src/main.ts"></script>
+  </body>
+</html>

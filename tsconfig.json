@@ -1,0 +1,8 @@
+{
+  "compilerOptions": {
+    "checkJs": true,
+    "target": "ESNEXT",
+    "module": "ESNEXT",
+    "lib": ["DOM", "ESNEXT", "DOM.Iterable"]
+  }
+}
