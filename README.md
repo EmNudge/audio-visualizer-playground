@@ -5,6 +5,8 @@ This is a quick project for use with iterating on audio visualizers.
 It uses vite's HMR boundaries to allow editing an audio visualizer while the audio plays.
 We can also declare dynamic variables that are type checked and editable in the GUI for more experimentation.
 
+![screenshot of audio visualizer](https://github.com/EmNudge/audio-visualizer-playground/assets/24513691/219b53a7-2909-4ec1-bad0-a35db2da683b)
+
 ## Usage
 
 This project uses `pnpm`. You can alternatively still use `npm` as the `package.json` still exists.
