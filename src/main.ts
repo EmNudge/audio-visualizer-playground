@@ -1,10 +1,38 @@
-import "../style.css";
+import "./style.css";
 import { draw, initVariables } from "./visualizers/line";
 import moduleText from './visualizers/line?raw';
 import { configureInputs, getAudio, setCode } from "./utils";
 import type { VariablesOf } from "./variables";
 
-setCode(moduleText);
+// handle audio loading and caching
+{
+  const songContainerEl = document.querySelector('.song-name-container');
+  const nameEl = songContainerEl.querySelector('h2');
+  const inputEl = songContainerEl.querySelector('input');
+  const audioEl = document.querySelector('audio');
+
+  caches.open('audioCache').then(async cache => {
+    const audioResp = await cache.match('audioFile');
+    if (!audioResp) return;
+
+    const blob = await audioResp.blob();
+    const name = await cache.match('audioName').then((resp) => resp.text());
+
+    audioEl.src = URL.createObjectURL(blob);
+    nameEl.textContent = name;
+  });
+
+  inputEl.addEventListener('input', () => {
+    const file = inputEl.files[0];
+    audioEl.src = URL.createObjectURL(file);
+    nameEl.textContent = file.name;
+
+    caches.open('audioCache').then(async cache => {
+      await cache.put('audioFile', new Response(file));
+      await cache.put('audioName', new Response(file.name));
+    });
+  });
+}
 
 const canvas = document.querySelector("canvas");
 
@@ -14,8 +42,6 @@ const args = {
   dimensions: { height: canvas.height, width: canvas.width },
   variables: {} as VariablesOf<typeof initVariables>,
 };
-
-configureInputs(initVariables, args.variables);
 
 let drawFunc = draw;
 
@@ -42,8 +68,10 @@ if (import.meta.hot) {
       console.error(e);
     }
   });
-
 }
+
+setCode(moduleText);
+configureInputs(initVariables, args.variables);
 
 function loop() {
   drawFunc(args);

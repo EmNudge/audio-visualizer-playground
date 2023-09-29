@@ -55,32 +55,6 @@
       </section>
     </main>
 
-    <script type="module">
-      const [nameEl, inputEl] = document.querySelectorAll('.song-name-container h2, .song-name-container input');
-      const audioEl = document.querySelector('audio');
-
-      caches.open('audioCache').then(async cache => {
-        const audioResp = await cache.match('audioFile');
-        if (!audioResp) return;
-
-        const blob = await audioResp.blob();
-        const name = await cache.match('audioName').then((resp) => resp.text());
-
-        audioEl.src = URL.createObjectURL(blob);
-        nameEl.textContent = name;
-      });
-
-      inputEl.addEventListener('input', ({ currentTarget }) => {
-        const file = currentTarget.files[0];
-        audioEl.src = URL.createObjectURL(file);
-        nameEl.textContent = file.name;
-
-        caches.open('audioCache').then(async cache => {
-          await cache.put('audioFile', new Response(file));
-          await cache.put('audioName', new Response(file.name));
-        });
-      });
-    </script>
     <script type="module" src="/src/main.ts"></script>
   </body>
 </html>
